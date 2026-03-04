@@ -58,7 +58,7 @@ export const useFlowStore = create<FlowState>((set, get) => ({
   updateNodeData: (id, data) =>
     set({
       nodes: get().nodes.map((n) =>
-        n.id === id ? { ...n, data: { ...n.data, ...data } } : n
+        n.id === id ? ({ ...n, data: { ...n.data, ...data } } as IODMNode) : n
       ),
     }),
 }));
