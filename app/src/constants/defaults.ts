@@ -9,9 +9,14 @@ export const NODE_COLORS = {
 
 export const DEFAULT_DATABASE_STATE: Omit<DatabaseState, 'next' | 'end'> = {
   type: 'DataBase',
-  table: '',
-  operation: 'get',
-  resultPath: '',
+  resource: {
+    type: 'DynamoDB',
+    dynamoDb: {
+      tableName: '',
+      PK: '',
+      resultPath: '',
+    },
+  },
 };
 
 export const DEFAULT_TASK_STATE: Omit<TaskState, 'next' | 'end'> = {
@@ -21,14 +26,16 @@ export const DEFAULT_TASK_STATE: Omit<TaskState, 'next' | 'end'> = {
 
 export const DEFAULT_API_STATE: Omit<ApiState, 'next' | 'end'> = {
   type: 'API',
-  method: 'GET',
-  url: '',
-  resultPath: '',
+  resource: {
+    route: '',
+    method: 'GET',
+    responsePath: '',
+  },
 };
 
 export const DEFAULT_RESPONSE_STATE: ResponseState = {
   type: 'Response',
   end: true,
   next: null,
-  statusCode: 200,
+  responseBody: {},
 };
