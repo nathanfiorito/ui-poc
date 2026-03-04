@@ -7,7 +7,7 @@ import App from './App.tsx';
 import { useFlowStore } from './store/flowStore';
 
 if (import.meta.env.DEV) {
-  (window as Record<string, unknown>).__store = useFlowStore;
+  (window as unknown as Record<string, unknown>).__store = useFlowStore;
 }
 
 createRoot(document.getElementById('root')!).render(
