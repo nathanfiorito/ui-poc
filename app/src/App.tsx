@@ -1,5 +1,6 @@
 import ReactFlow, { Background, Controls, MiniMap } from 'reactflow';
 import { useFlowStore } from './store/flowStore';
+import { nodeTypes } from './nodes';
 
 function App() {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect } = useFlowStore();
@@ -13,6 +14,7 @@ function App() {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          nodeTypes={nodeTypes}
           fitView
         >
           <Background />
