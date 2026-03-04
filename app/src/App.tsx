@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactFlow, { Background, Controls, MiniMap } from 'reactflow';
 import { useFlowStore } from './store/flowStore';
 
