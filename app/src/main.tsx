@@ -4,6 +4,11 @@ import { ReactFlowProvider } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './index.css';
 import App from './App.tsx';
+import { useFlowStore } from './store/flowStore';
+
+if (import.meta.env.DEV) {
+  (window as Record<string, unknown>).__store = useFlowStore;
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
