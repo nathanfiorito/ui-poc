@@ -20,6 +20,8 @@ const makeNode = (id: string): IODMNode => ({
     stateType: 'task',
     type: 'task',
     conditions: [],
+    next: null,
+    end: false,
   },
 });
 
