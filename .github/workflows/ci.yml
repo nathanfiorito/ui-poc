@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, 'feat/**']
+    branches: [main, 'feat/**', 'fix/**', 'chore/**']
   pull_request:
     branches: [main]
 
@@ -34,3 +34,29 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  auto-pr:
+    needs: ci
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref_name != 'main'
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create PR if not exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh pr list --head "${{ github.ref_name }}" --base main --json number --jq '.[0].number')
+          if [ -z "$EXISTING" ]; then
+            gh pr create \
+              --base main \
+              --head "${{ github.ref_name }}" \
+              --fill
+            echo "PR created."
+          else
+            echo "PR #$EXISTING already exists — skipping."
+          fi
