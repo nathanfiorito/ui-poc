@@ -6,7 +6,7 @@ Editor visual de workflows para o **IODM** (Intelligent Orchestration & Decision
 um motor de orquestração inspirado no AWS Step Functions. O editor permite criar, visualizar
 e editar **Policies** (fluxos declarativos em JSON) por meio de uma interface drag-and-drop.
 
-Stack: React 18 + TypeScript + React Flow v11 + Tailwind CSS v3 + Vite + Zustand
+Stack: React 19 + TypeScript + React Flow v11 + Tailwind CSS v3 + Vite + Zustand
 
 ---
 
@@ -40,6 +40,7 @@ src/
 
   store/
     flowStore.ts        # Estado global: nodes, edges, policyMeta, selectedNode
+    flowStore.test.ts   # Testes unitários do store com Vitest
 
   utils/
     policyParser.ts     # Converte Policy JSON → nodes/edges do React Flow
@@ -48,8 +49,15 @@ src/
     validators.ts       # Valida integridade da Policy (startAt, end, next, etc.)
 
   types/
-    policy.ts           # Tipos do domínio: Policy, State, StateType, Condition, etc.
-    flow.ts             # Tipos do React Flow estendidos com dados do IODM
+    policy/
+      base.ts           # StateType, BaseState
+      condition.ts      # Condition
+      database.ts       # DatabaseState, DynamoDbConfig, DatabaseResource
+      task.ts           # TaskState
+      api.ts            # ApiState, ApiResource
+      response.ts       # ResponseState
+      index.ts          # Policy, PolicyMeta, State (union), re-exports
+    flow.ts             # IODMNode, IODMEdge, IODMNodeData variants
 
   constants/
     nodeTypes.ts        # Enum dos tipos de estado: DataBase | task | API | Response
@@ -57,9 +65,9 @@ src/
 
 public/
 docs/
-  index.md              # Documentação oficial do IODM (spec da Policy)
-  architecture.md       # Decisões de arquitetura e trade-offs
-  implementation-plan.md # Plano de implementação com checkboxes [ ]
+  introduction.md        # Documentação oficial do IODM (spec da Policy)
+  architecture.md        # Decisões de arquitetura e trade-offs
+  implementation-plan.md # Plano de implementação com status das fases
 ```
 
 ---
@@ -83,7 +91,7 @@ Os 4 tipos de estado do IODM mapeiam diretamente para 4 tipos de nó:
 ### React Flow
 - `<ReactFlow />` vive exclusivamente em `src/components/FlowCanvas/`
 - `nodeTypes` e `edgeTypes` são definidos **fora** do componente (evita re-renders)
-- Cada nó recebe `NodeProps<T>` tipado com o tipo do estado correspondente de `src/types/policy.ts`
+- Cada nó recebe `NodeProps<T>` tipado com o tipo do estado correspondente de `src/types/policy/`
 - `Handle` de source/target sempre com `id` explícito (TaskNode tem múltiplos handles — um por condição)
 
 ### Conversão Policy ↔ React Flow
@@ -144,6 +152,9 @@ npm run dev       # Dev server (Vite)
 npm run build     # Build de produção
 npm run lint      # ESLint
 npm run typecheck # tsc --noEmit
+npm run test      # Vitest (watch mode)
+npm run test:ui   # Vitest com interface visual
+npm run test:run  # Vitest (single run)
 ```
 
 ---
@@ -152,7 +163,7 @@ npm run typecheck # tsc --noEmit
 
 Referencie quando necessário — não carregar em toda sessão:
 
-- `@docs/index.md` — spec completa do IODM: todos os tipos, campos, exemplos
+- `@docs/introduction.md` — spec completa do IODM: todos os tipos, campos, exemplos
 - `@docs/architecture.md` — decisões de arquitetura e trade-offs
 - `@docs/implementation-plan.md` — plano de implementação com checkboxes [ ]
 
@@ -166,11 +177,11 @@ Referencie quando necessário — não carregar em toda sessão:
 
 ### Fases e Tarefas
 
-#### Fase 1 — Setup e Infraestrutura
-- [ ] Configurar Vite + React + TypeScript
-- [ ] Instalar e configurar ReactFlow, Zustand e Tailwind CSS v3
-- [ ] Definir tipos TypeScript do domínio IODM
-- [ ] Configurar Zustand store e testes com Vitest
+#### Fase 1 — Setup e Infraestrutura ✅
+- [x] Configurar Vite + React + TypeScript
+- [x] Instalar e configurar ReactFlow, Zustand e Tailwind CSS v3
+- [x] Definir tipos TypeScript do domínio IODM
+- [x] Configurar Zustand store e testes com Vitest
 
 #### Fase 2 — Nós Customizados (Custom Nodes)
 - [ ] Implementar DatabaseNode (azul)
