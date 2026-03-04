@@ -155,3 +155,42 @@ Referencie quando necessário — não carregar em toda sessão:
 - `@docs/index.md` — spec completa do IODM: todos os tipos, campos, exemplos
 - `@docs/architecture.md` — decisões de arquitetura e trade-offs
 - `@docs/implementation-plan.md` — plano de implementação com checkboxes [ ]
+
+---
+
+## Gerenciamento de Tarefas — Asana
+
+**Projeto:** IODM Visual Workflow Editor
+**GID:** `1213522953495309`
+**Workspace GID:** `1213545003196581`
+
+### Fases e Tarefas
+
+#### Fase 1 — Setup e Infraestrutura
+- [ ] Configurar Vite + React + TypeScript
+- [ ] Instalar e configurar ReactFlow, Zustand e Tailwind CSS v3
+- [ ] Definir tipos TypeScript do domínio IODM
+- [ ] Configurar Zustand store e testes com Vitest
+
+#### Fase 2 — Nós Customizados (Custom Nodes)
+- [ ] Implementar DatabaseNode (azul)
+- [ ] Implementar TaskNode com múltiplos handles (amarelo)
+- [ ] Implementar ApiNode (verde)
+- [ ] Implementar ResponseNode (roxo)
+- [ ] Registrar nodeTypes e edgeTypes fora do componente
+
+#### Fase 3 — Conversão Policy ↔ React Flow
+- [ ] Implementar policyParser.ts (JSON → nodes/edges)
+- [ ] Implementar policySerializer.ts (nodes/edges → JSON)
+- [ ] Layout automático com Dagre (layoutUtils.ts)
+
+#### Fase 4 — Sidebar, NodePanel e Toolbar
+- [ ] Implementar Sidebar com drag-and-drop
+- [ ] Implementar NodePanel com React Hook Form + Zod
+- [ ] Implementar Toolbar (nome da policy, exportar, importar)
+- [ ] Implementar JsonPreview (visualizador em tempo real)
+
+#### Fase 5 — Validação, Testes e Qualidade
+- [ ] Implementar validators.ts
+- [ ] Testes unitários para policyParser e policySerializer
+- [ ] Testes de integração do FlowCanvas
