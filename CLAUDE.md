@@ -10,6 +10,15 @@ Stack: React 19 + TypeScript + React Flow v11 + Tailwind CSS v3 + Vite + Zustand
 
 ---
 
+## Instruções gerais
+- Sempre que alterar o código, execute: `npm run build`
+- Após o build, execute: `npm test`
+- Se os testes falharem, não envie as alterações e corrija o código.
+- Após a execuções de ambos os comandos com sucesso, atualize a documentação com as alterações realizadas.
+- Após todos os passos á cima estarem concluídos, execute o commit e push das alterações e uma nova branch seguindo o Conventional Commits.
+
+---
+
 ## Project Structure
 
 ```
