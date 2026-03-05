@@ -29,7 +29,7 @@ export function Toolbar() {
 
   function handleImport(json: string) {
     const policy = JSON.parse(json) as Policy;
-    const { nodes: parsedNodes, edges: parsedEdges } = parsePolicy(policy);
+    const { nodes: parsedNodes, edges: parsedEdges, warnings } = parsePolicy(policy);
     setNodes(parsedNodes);
     setEdges(parsedEdges);
     setPolicyMeta({
@@ -39,6 +39,9 @@ export function Toolbar() {
       version: policy.version,
       startAt: policy.startAt,
     });
+    if (warnings.length > 0) {
+      alert(`Import concluído com avisos:\n\n${warnings.map(w => `- ${w}`).join('\n')}`);
+    }
   }
 
   return (

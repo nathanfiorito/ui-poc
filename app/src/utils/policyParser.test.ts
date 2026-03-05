@@ -361,6 +361,93 @@ describe('parsePolicy', () => {
     expect(conditionalEdges).toHaveLength(0);
   });
 
+  it('warns and skips edge when default next references a non-existent state', () => {
+    const brokenNextPolicy: Policy = {
+      id: 'bn-001',
+      name: 'Broken Next',
+      version: '1.0',
+      startAt: 'FetchData',
+      states: {
+        FetchData: {
+          type: 'DataBase',
+          next: 'NonExistentState',
+          end: false,
+          resource: {
+            type: 'DynamoDB',
+            dynamoDb: { tableName: 'T', PK: 'pk', resultPath: 'r' },
+          },
+        },
+      },
+    };
+
+    const { nodes, edges, warnings } = parsePolicy(brokenNextPolicy);
+
+    expect(nodes).toHaveLength(1);
+    expect(edges).toHaveLength(0);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toContain('NonExistentState');
+  });
+
+  it('warns and skips edge when a task condition next references a non-existent state', () => {
+    const brokenConditionPolicy: Policy = {
+      id: 'bc-001',
+      name: 'Broken Condition',
+      version: '1.0',
+      startAt: 'Decide',
+      states: {
+        Decide: {
+          type: 'task',
+          next: null,
+          end: false,
+          conditions: [
+            { expression: 'input.x > 0', next: 'GhostState', resultPath: null },
+            { expression: 'input.x <= 0', next: 'End', resultPath: null },
+          ],
+        },
+        End: { type: 'Response', next: null, end: true, responseBody: {} },
+      },
+    };
+
+    const { edges, warnings } = parsePolicy(brokenConditionPolicy);
+
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toContain('GhostState');
+
+    const conditionalEdges = edges.filter(e => e.type === 'conditional');
+    expect(conditionalEdges).toHaveLength(1);
+    expect(conditionalEdges[0].target).toBe('End');
+  });
+
+  it('creates only valid edges and one warning per broken reference in a mixed policy', () => {
+    const mixedPolicy: Policy = {
+      id: 'mx-001',
+      name: 'Mixed Policy',
+      version: '1.0',
+      startAt: 'Decide',
+      states: {
+        Decide: {
+          type: 'task',
+          next: 'MissingFallback',
+          end: false,
+          conditions: [
+            { expression: 'input.x > 0', next: 'End', resultPath: null },
+            { expression: 'input.x < 0', next: 'MissingTarget', resultPath: null },
+          ],
+        },
+        End: { type: 'Response', next: null, end: true, responseBody: {} },
+      },
+    };
+
+    const { edges, warnings } = parsePolicy(mixedPolicy);
+
+    expect(warnings).toHaveLength(2);
+    expect(warnings.some(w => w.includes('MissingFallback'))).toBe(true);
+    expect(warnings.some(w => w.includes('MissingTarget'))).toBe(true);
+
+    expect(edges).toHaveLength(1);
+    expect(edges[0].target).toBe('End');
+  });
+
   it('sets sourceHandle to "default" on default edges', () => {
     const { edges } = parsePolicy(databasePolicy);
     const defaultEdge = edges.find(e => e.type === 'default');
