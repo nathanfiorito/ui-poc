@@ -235,4 +235,147 @@ describe('parsePolicy', () => {
       expect(isFinite(node.position.y)).toBe(true);
     });
   });
+
+  it('embeds ApiNode domain data into node.data', () => {
+    const { nodes } = parsePolicy(helloWorldPolicy);
+    const apiNode = nodes.find(n => n.id === 'APIStateExample');
+
+    expect(apiNode).toBeDefined();
+    expect(apiNode?.type).toBe('API');
+    // resource fields come from the ApiState
+    const data = apiNode?.data as unknown as Record<string, unknown>;
+    const resource = data.resource as Record<string, unknown>;
+    expect(resource.route).toBe('https://api.example.com/clientes');
+    expect(resource.method).toBe('POST');
+    expect(resource.responsePath).toBe('outputApi');
+    expect(resource.authentication).toBe('true');
+  });
+
+  it('embeds DatabaseNode domain data into node.data', () => {
+    const { nodes } = parsePolicy(helloWorldPolicy);
+    const dbNode = nodes.find(n => n.id === 'DatabaseStateExample');
+
+    expect(dbNode).toBeDefined();
+    expect(dbNode?.type).toBe('DataBase');
+    const data = dbNode?.data as unknown as Record<string, unknown>;
+    const resource = data.resource as Record<string, unknown>;
+    const dynamoDb = resource.dynamoDb as Record<string, unknown>;
+    expect(dynamoDb.tableName).toBe('exampleTable');
+    expect(dynamoDb.PK).toBe('primaryKeyExample');
+    expect(dynamoDb.resultPath).toBe('outputDatabase');
+  });
+
+  it('embeds ResponseNode domain data (responseBody + end) into node.data', () => {
+    const { nodes } = parsePolicy(helloWorldPolicy);
+    const responseNode = nodes.find(n => n.id === 'ResponseStateExample');
+
+    expect(responseNode).toBeDefined();
+    expect(responseNode?.type).toBe('Response');
+    const data = responseNode?.data as unknown as Record<string, unknown>;
+    expect(data.end).toBe(true);
+    expect(data.responseBody).toEqual({
+      clientData: 'outputApi',
+      databaseData: 'outputDatabase',
+    });
+  });
+
+  it('sets edge.data.expression and edge.data.resultPath on conditional edges', () => {
+    const { edges } = parsePolicy(taskPolicy);
+    const conditionalEdges = edges.filter(e => e.type === 'conditional');
+
+    expect(conditionalEdges[0].data?.expression).toBe('input.age > 18');
+    expect(conditionalEdges[0].data?.resultPath).toBeNull();
+    expect(conditionalEdges[1].data?.expression).toBe('input.age < 18');
+    expect(conditionalEdges[1].data?.resultPath).toBeNull();
+  });
+
+  it('preserves non-null resultPath on condition edges', () => {
+    const policyWithResultPath: Policy = {
+      id: 'rp-001',
+      name: 'ResultPath Policy',
+      version: '1.0',
+      startAt: 'Decide',
+      states: {
+        Decide: {
+          type: 'task',
+          next: null,
+          end: false,
+          conditions: [
+            { expression: 'input.x > 0', next: 'End', resultPath: 'myResult' },
+          ],
+        },
+        End: { type: 'Response', next: null, end: true, responseBody: {} },
+      },
+    };
+
+    const { edges } = parsePolicy(policyWithResultPath);
+    const conditionalEdge = edges.find(e => e.type === 'conditional');
+
+    expect(conditionalEdge).toBeDefined();
+    expect(conditionalEdge?.data?.resultPath).toBe('myResult');
+  });
+
+  it('produces no default edge when task next is null', () => {
+    const noFallbackPolicy: Policy = {
+      id: 'nf-001',
+      name: 'No Fallback',
+      version: '1.0',
+      startAt: 'Decide',
+      states: {
+        Decide: {
+          type: 'task',
+          next: null,
+          end: false,
+          conditions: [{ expression: 'input.x > 0', next: 'End', resultPath: null }],
+        },
+        End: { type: 'Response', next: null, end: true, responseBody: {} },
+      },
+    };
+
+    const { edges } = parsePolicy(noFallbackPolicy);
+    const defaultEdges = edges.filter(e => e.type === 'default');
+
+    expect(defaultEdges).toHaveLength(0);
+  });
+
+  it('produces no conditional edges when task conditions array is empty', () => {
+    const emptyConditionsPolicy: Policy = {
+      id: 'ec-001',
+      name: 'Empty Conditions',
+      version: '1.0',
+      startAt: 'Decide',
+      states: {
+        Decide: {
+          type: 'task',
+          next: 'End',
+          end: false,
+          conditions: [],
+        },
+        End: { type: 'Response', next: null, end: true, responseBody: {} },
+      },
+    };
+
+    const { edges } = parsePolicy(emptyConditionsPolicy);
+    const conditionalEdges = edges.filter(e => e.type === 'conditional');
+
+    expect(conditionalEdges).toHaveLength(0);
+  });
+
+  it('sets sourceHandle to "default" on default edges', () => {
+    const { edges } = parsePolicy(databasePolicy);
+    const defaultEdge = edges.find(e => e.type === 'default');
+
+    expect(defaultEdge?.sourceHandle).toBe('default');
+  });
+
+  it('follows edge ID naming convention for default and conditional edges', () => {
+    const { edges } = parsePolicy(taskPolicy);
+
+    const defaultEdge = edges.find(e => e.type === 'default');
+    expect(defaultEdge?.id).toBe('edge-Decide-default');
+
+    const conditionalEdges = edges.filter(e => e.type === 'conditional');
+    expect(conditionalEdges[0].id).toBe('edge-Decide-condition-0');
+    expect(conditionalEdges[1].id).toBe('edge-Decide-condition-1');
+  });
 });
