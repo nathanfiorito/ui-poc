@@ -1,29 +1,11 @@
-import ReactFlow, { Background, Controls, MiniMap } from 'reactflow';
-import { useFlowStore } from './store/flowStore';
-import { nodeTypes } from './nodes';
-import { edgeTypes } from './edges';
+import { Sidebar } from './components/Sidebar';
+import { FlowCanvas } from './components/FlowCanvas';
 
 function App() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect } = useFlowStore();
-
   return (
     <div className="w-full h-screen flex">
-      <div className="flex-1 h-full">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          fitView
-        >
-          <Background />
-          <Controls />
-          <MiniMap />
-        </ReactFlow>
-      </div>
+      <Sidebar />
+      <FlowCanvas />
     </div>
   );
 }
