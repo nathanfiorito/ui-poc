@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Handle, Position, type NodeProps } from 'reactflow';
 import { useFlowStore } from '../../store/flowStore';
 import type { TaskNodeData } from '../../types/flow';
@@ -15,7 +15,7 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeData>) {
   const [conditionTops, setConditionTops] = useState<number[]>([]);
   const [defaultTop, setDefaultTop] = useState<number | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const tops = conditionRowRefs.current.map((ref) =>
       ref ? ref.offsetTop + ref.offsetHeight / 2 : 0
     );
@@ -35,7 +35,7 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeData>) {
       <Handle type="target" position={Position.Top} id="target" />
 
       <div className="bg-amber-500 text-white text-sm font-semibold px-3 py-1.5 rounded-t-md">
-        Task
+        Task{data.label ? ` — ${data.label}` : ''}
       </div>
 
       <div className="px-3 py-2 space-y-1">

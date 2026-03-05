@@ -29,7 +29,7 @@ function toForm(data: ApiNodeData): ApiFormValues {
     headers: Object.entries(data.resource.headers ?? {}).map(([key, value]) => ({ key, value })),
     body: data.resource.body ? JSON.stringify(data.resource.body, null, 2) : '',
     responsePath: data.resource.responsePath,
-    authentication: data.resource.authentication ?? '',
+    authentication: data.resource.authentication ?? false,
   };
 }
 
@@ -58,7 +58,7 @@ function fromForm(v: ApiFormValues): Partial<ApiNodeData> | null {
       headers: Object.keys(headers).length > 0 ? headers : undefined,
       body,
       responsePath: v.responsePath ?? '',
-      authentication: v.authentication || undefined,
+      authentication: v.authentication,
     },
   };
 }
@@ -141,9 +141,15 @@ export function ApiForm({ node }: Props) {
         <input {...register('responsePath', { required: 'Obrigatório' })} className={INPUT} placeholder="$.data" />
       </Field>
 
-      <Field label="Authentication (opcional)">
-        <input {...register('authentication')} className={INPUT} placeholder="Bearer token" />
-      </Field>
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="authentication"
+          {...register('authentication')}
+          className="rounded border-gray-300"
+        />
+        <label htmlFor="authentication" className="text-xs text-gray-600 dark:text-gray-300">Authentication</label>
+      </div>
 
       <div>
         <div className="flex items-center justify-between mb-1">

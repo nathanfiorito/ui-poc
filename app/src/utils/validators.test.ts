@@ -42,6 +42,7 @@ const validPolicy: Policy = {
         route: 'https://api.example.com/data',
         method: 'GET',
         responsePath: 'apiResult',
+        authentication: false,
       },
     },
     Done: {

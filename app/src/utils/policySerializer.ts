@@ -1,27 +1,11 @@
 import type { Node, Edge } from 'reactflow';
 import type { Policy, PolicyMeta, State } from '../types/policy';
 import type { IODMNodeData, TaskNodeData } from '../types/flow';
-import type { Condition } from '../types/policy/condition';
 
 function getDefaultNext(nodeId: string, edges: Edge[], idToLabel: Map<string, string>): string | null {
   const edge = edges.find((e) => e.source === nodeId && e.type === 'default');
   if (!edge) return null;
   return idToLabel.get(edge.target) ?? edge.target;
-}
-
-function buildConditions(nodeId: string, edges: Edge[], idToLabel: Map<string, string>): Condition[] {
-  return edges
-    .filter((e) => e.source === nodeId && e.type === 'conditional')
-    .sort((a, b) => {
-      const aIdx = parseInt(a.sourceHandle?.replace('condition-', '') ?? '0', 10);
-      const bIdx = parseInt(b.sourceHandle?.replace('condition-', '') ?? '0', 10);
-      return aIdx - bIdx;
-    })
-    .map((e) => ({
-      expression: (e.data?.expression as string) ?? String(e.label ?? ''),
-      next: idToLabel.get(e.target) ?? e.target,
-      resultPath: (e.data?.resultPath as string | null) ?? null,
-    }));
 }
 
 function nodeToState(node: Node<IODMNodeData>, edges: Edge[], idToLabel: Map<string, string>): State {
@@ -41,7 +25,11 @@ function nodeToState(node: Node<IODMNodeData>, edges: Edge[], idToLabel: Map<str
       next: getDefaultNext(nodeId, edges, idToLabel),
       ...(taskData.loopOver !== undefined && { loopOver: taskData.loopOver }),
       ...(taskData.allowFailOnLoopOver !== undefined && { allowFailOnLoopOver: taskData.allowFailOnLoopOver }),
-      conditions: buildConditions(nodeId, edges, idToLabel),
+      conditions: (taskData.conditions ?? []).map((c) => ({
+        expression: c.expression,
+        next: c.next,
+        resultPath: c.resultPath ?? null,
+      })),
     };
   }
 

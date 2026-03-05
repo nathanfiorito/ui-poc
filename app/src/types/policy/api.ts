@@ -6,7 +6,7 @@ export interface ApiResource {
   headers?: Record<string, string>;
   body?: Record<string, unknown>;
   responsePath: string;
-  authentication?: string;
+  authentication: boolean;
 }
 
 export interface ApiState extends BaseState {

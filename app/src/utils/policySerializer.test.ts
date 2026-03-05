@@ -51,7 +51,7 @@ const helloWorldPolicy: Policy = {
         headers: { 'Content-Type': 'application/json' },
         body: { cpf: 'input.client.cpf' },
         responsePath: 'outputApi',
-        authentication: 'true',
+        authentication: true,
       },
     },
     ReturnHigherThan: {

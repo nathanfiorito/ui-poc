@@ -32,7 +32,7 @@ export function ApiNode({ id, data, selected }: NodeProps<ApiNodeData>) {
 
       <div className="bg-green-500 text-white text-sm font-semibold px-3 py-1.5 rounded-t-md flex items-center justify-between">
         <span>API{data.label ? ` — ${data.label}` : ''}</span>
-        {authentication === 'true' && (
+        {authentication === true && (
           <span className="text-xs bg-green-700 rounded px-1.5 py-0.5">🔒 Auth</span>
         )}
       </div>
