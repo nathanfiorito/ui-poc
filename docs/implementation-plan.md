@@ -50,12 +50,12 @@
 
 ---
 
-## Fase 4 — UI Components (Sidebar, NodePanel, Toolbar, JsonPreview) ⏳ PENDENTE
+## Fase 4 — UI Components (Sidebar, NodePanel, Toolbar, JsonPreview) ✅ COMPLETA
 
-- [ ] Implementar `Sidebar` com drag-and-drop (arrastar nós para o canvas)
-- [ ] Implementar `NodePanel` com React Hook Form + Zod (editar propriedades do nó selecionado)
-- [ ] Implementar `Toolbar` (nome da Policy, botão exportar JSON, botão importar JSON)
-- [ ] Implementar `JsonPreview` (visualizador do Policy JSON em tempo real)
+- [x] Implementar `Sidebar` com drag-and-drop (arrastar nós para o canvas)
+- [x] Implementar `NodePanel` com React Hook Form + Zod (editar propriedades do nó selecionado)
+- [x] Implementar `Toolbar` (nome da Policy, botão exportar JSON, botão importar JSON)
+- [x] Implementar `JsonPreview` (visualizador do Policy JSON em tempo real)
 
 **Critérios de aceite:**
 - Arrastar da Sidebar cria nó no canvas com valores padrão (`constants/defaults.ts`)
