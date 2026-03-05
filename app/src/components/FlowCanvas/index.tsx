@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import ReactFlow, { Background, Controls, MiniMap, useReactFlow } from 'reactflow';
+import ReactFlow, { Background, Controls, MiniMap, useReactFlow, type Node } from 'reactflow';
 import { useFlowStore } from '../../store/flowStore';
 import { nodeTypes } from '../../nodes';
 import { edgeTypes } from '../../edges';
@@ -7,6 +7,7 @@ import type { StateType } from '../../types/policy';
 
 export function FlowCanvas() {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, addNode } = useFlowStore();
+  const setSelectedNodeId = useFlowStore((s) => s.setSelectedNodeId);
   const { screenToFlowPosition } = useReactFlow();
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
@@ -27,6 +28,17 @@ export function FlowCanvas() {
     [screenToFlowPosition, addNode]
   );
 
+  const onNodeClick = useCallback(
+    (_: React.MouseEvent, node: Node) => {
+      setSelectedNodeId(node.id);
+    },
+    [setSelectedNodeId]
+  );
+
+  const onPaneClick = useCallback(() => {
+    setSelectedNodeId(null);
+  }, [setSelectedNodeId]);
+
   return (
     <div className="flex-1 h-full">
       <ReactFlow
@@ -39,6 +51,8 @@ export function FlowCanvas() {
         edgeTypes={edgeTypes}
         onDrop={onDrop}
         onDragOver={onDragOver}
+        onNodeClick={onNodeClick}
+        onPaneClick={onPaneClick}
         fitView
       >
         <Background />
