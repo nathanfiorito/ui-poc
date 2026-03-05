@@ -198,6 +198,155 @@ describe('serializePolicy', () => {
     expect(result.states['APIStateExample']).toBeDefined();
   });
 
+  it('derives startAt from the node with isStart=true, overriding policyMeta.startAt', () => {
+    const { nodes, edges } = parsePolicy(helloWorldPolicy);
+    // Flip isStart to a different node while keeping policyMeta.startAt as 'DatabaseStateExample'
+    const tweakedNodes = nodes.map((n) => ({
+      ...n,
+      data: { ...n.data, isStart: n.data.label === 'TaskStateExample' },
+    }));
+
+    const result = serializePolicy(tweakedNodes, edges, policyMeta);
+
+    expect(result.startAt).toBe('TaskStateExample');
+  });
+
+  it('serializes task with empty conditions as conditions: []', () => {
+    const emptyCondPolicy: Policy = {
+      id: 'ec-001',
+      name: 'Empty',
+      version: '1.0',
+      startAt: 'Decide',
+      states: {
+        Decide: { type: 'task', next: 'End', end: false, conditions: [] },
+        End: { type: 'Response', next: null, end: true, responseBody: {} },
+      },
+    };
+    const emptyCondMeta: PolicyMeta = { id: 'ec-001', name: 'Empty', version: '1.0', startAt: 'Decide' };
+
+    const { nodes, edges } = parsePolicy(emptyCondPolicy);
+    const result = serializePolicy(nodes, edges, emptyCondMeta);
+
+    const taskState = result.states['Decide'];
+    expect(taskState.type).toBe('task');
+    if (taskState.type === 'task') {
+      expect(taskState.conditions).toEqual([]);
+    }
+  });
+
+  it('serializes task next as null when no default edge exists', () => {
+    const noFallbackPolicy: Policy = {
+      id: 'nf-001',
+      name: 'No Fallback',
+      version: '1.0',
+      startAt: 'Decide',
+      states: {
+        Decide: {
+          type: 'task',
+          next: null,
+          end: false,
+          conditions: [{ expression: 'input.x > 0', next: 'End', resultPath: null }],
+        },
+        End: { type: 'Response', next: null, end: true, responseBody: {} },
+      },
+    };
+    const noFallbackMeta: PolicyMeta = { id: 'nf-001', name: 'No Fallback', version: '1.0', startAt: 'Decide' };
+
+    const { nodes, edges } = parsePolicy(noFallbackPolicy);
+    const result = serializePolicy(nodes, edges, noFallbackMeta);
+
+    const taskState = result.states['Decide'];
+    expect(taskState.next).toBeNull();
+  });
+
+  it('preserves non-null resultPath in condition output', () => {
+    const rpPolicy: Policy = {
+      id: 'rp-001',
+      name: 'RP Policy',
+      version: '1.0',
+      startAt: 'Decide',
+      states: {
+        Decide: {
+          type: 'task',
+          next: null,
+          end: false,
+          conditions: [{ expression: 'input.x > 0', next: 'End', resultPath: 'myResult' }],
+        },
+        End: { type: 'Response', next: null, end: true, responseBody: {} },
+      },
+    };
+    const rpMeta: PolicyMeta = { id: 'rp-001', name: 'RP Policy', version: '1.0', startAt: 'Decide' };
+
+    const { nodes, edges } = parsePolicy(rpPolicy);
+    const result = serializePolicy(nodes, edges, rpMeta);
+
+    const taskState = result.states['Decide'];
+    if (taskState.type === 'task') {
+      expect(taskState.conditions[0].resultPath).toBe('myResult');
+    }
+  });
+
+  it('includes loopOver and allowFailOnLoopOver when present in node data', () => {
+    const loopPolicy: Policy = {
+      id: 'lp-001',
+      name: 'Loop Policy',
+      version: '1.0',
+      startAt: 'LoopTask',
+      states: {
+        LoopTask: {
+          type: 'task',
+          next: 'End',
+          end: false,
+          loopOver: 'input.items',
+          allowFailOnLoopOver: true,
+          conditions: [],
+        },
+        End: { type: 'Response', next: null, end: true, responseBody: {} },
+      },
+    };
+    const loopMeta: PolicyMeta = { id: 'lp-001', name: 'Loop Policy', version: '1.0', startAt: 'LoopTask' };
+
+    const { nodes, edges } = parsePolicy(loopPolicy);
+    const result = serializePolicy(nodes, edges, loopMeta);
+
+    const taskState = result.states['LoopTask'];
+    expect(taskState.type).toBe('task');
+    if (taskState.type === 'task') {
+      expect((taskState as unknown as Record<string, unknown>).loopOver).toBe('input.items');
+      expect((taskState as unknown as Record<string, unknown>).allowFailOnLoopOver).toBe(true);
+    }
+  });
+
+  it('falls back to node.id as state key when label is empty', () => {
+    const { nodes, edges } = parsePolicy(helloWorldPolicy);
+    // Clear the label on one node to trigger the fallback
+    const tweakedNodes = nodes.map((n) =>
+      n.id === 'APIStateExample' ? { ...n, data: { ...n.data, label: '' } } : n
+    );
+
+    const result = serializePolicy(tweakedNodes, edges, policyMeta);
+
+    // The state should be keyed by node.id ('APIStateExample') because label is empty
+    expect(result.states['APIStateExample']).toBeDefined();
+  });
+
+  it('sorts conditions by handle index even when edges are out of order', () => {
+    const { nodes, edges } = parsePolicy(helloWorldPolicy);
+    // Reverse the order of conditional edges to simulate out-of-order storage
+    const taskEdges = edges.filter((e) => e.source === 'TaskStateExample' && e.type === 'conditional');
+    const otherEdges = edges.filter((e) => !(e.source === 'TaskStateExample' && e.type === 'conditional'));
+    const reversedEdges = [...otherEdges, ...taskEdges.reverse()];
+
+    const result = serializePolicy(nodes, reversedEdges, policyMeta);
+
+    const taskState = result.states['TaskStateExample'];
+    if (taskState.type === 'task') {
+      // condition-0 should always come first regardless of edge order
+      expect(taskState.conditions[0].expression).toBe('input.age > 18');
+      expect(taskState.conditions[1].expression).toBe('input.age < 18');
+    }
+  });
+
   it('resolves next references to labels, not internal node IDs', () => {
     const { nodes, edges } = parsePolicy(helloWorldPolicy);
     const remappedNodes = nodes.map((n) => ({ ...n, id: `id-${n.data.label}` }));
