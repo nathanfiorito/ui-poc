@@ -5,8 +5,8 @@ import type { IODMNode } from '../../types/flow';
 import type { TaskNodeData } from '../../types/flow';
 import type { TaskFormValues } from './schemas';
 
-const INPUT = 'w-full text-xs border border-gray-300 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white';
-const LABEL = 'block text-xs font-medium text-gray-600 mb-0.5';
+const INPUT = 'w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white dark:bg-gray-700 dark:text-gray-100';
+const LABEL = 'block text-xs font-medium text-gray-600 dark:text-gray-300 mb-0.5';
 const ERROR = 'text-xs text-red-500 mt-0.5';
 
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
@@ -114,9 +114,9 @@ export function TaskForm({ node }: Props) {
 
         <div className="space-y-3">
           {fields.map((field, index) => (
-            <div key={field.id} className="border border-gray-200 rounded p-2 bg-white space-y-2">
+            <div key={field.id} className="border border-gray-200 dark:border-gray-600 rounded p-2 bg-white dark:bg-gray-700 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-gray-500">Condição {index + 1}</span>
+                <span className="text-xs font-medium text-gray-500 dark:text-gray-300">Condição {index + 1}</span>
                 <button
                   type="button"
                   onClick={() => remove(index)}
@@ -173,7 +173,7 @@ export function TaskForm({ node }: Props) {
           {...register('allowFailOnLoopOver')}
           className="rounded border-gray-300"
         />
-        <label htmlFor="allowFailOnLoopOver" className="text-xs text-gray-600">Allow Fail On Loop</label>
+        <label htmlFor="allowFailOnLoopOver" className="text-xs text-gray-600 dark:text-gray-300">Allow Fail On Loop</label>
       </div>
     </form>
   );

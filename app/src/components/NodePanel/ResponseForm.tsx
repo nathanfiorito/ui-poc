@@ -5,8 +5,8 @@ import type { IODMNode } from '../../types/flow';
 import type { ResponseNodeData } from '../../types/flow';
 import type { ResponseFormValues } from './schemas';
 
-const INPUT = 'w-full text-xs border border-gray-300 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white';
-const LABEL = 'block text-xs font-medium text-gray-600 mb-0.5';
+const INPUT = 'w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white dark:bg-gray-700 dark:text-gray-100';
+const LABEL = 'block text-xs font-medium text-gray-600 dark:text-gray-300 mb-0.5';
 const ERROR = 'text-xs text-red-500 mt-0.5';
 
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {

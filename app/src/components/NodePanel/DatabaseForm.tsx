@@ -5,8 +5,8 @@ import type { IODMNode } from '../../types/flow';
 import type { DatabaseNodeData } from '../../types/flow';
 import type { DatabaseFormValues } from './schemas';
 
-const INPUT = 'w-full text-xs border border-gray-300 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white';
-const LABEL = 'block text-xs font-medium text-gray-600 mb-0.5';
+const INPUT = 'w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white dark:bg-gray-700 dark:text-gray-100';
+const LABEL = 'block text-xs font-medium text-gray-600 dark:text-gray-300 mb-0.5';
 const ERROR = 'text-xs text-red-500 mt-0.5';
 
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
@@ -122,7 +122,7 @@ export function DatabaseForm({ node }: Props) {
 
       <div className="flex items-center gap-2">
         <input type="checkbox" id="fullScan" {...register('fullScan')} className="rounded border-gray-300" />
-        <label htmlFor="fullScan" className="text-xs text-gray-600">Full Scan</label>
+        <label htmlFor="fullScan" className="text-xs text-gray-600 dark:text-gray-300">Full Scan</label>
       </div>
 
       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider pt-1">Loop (opcional)</p>
@@ -138,7 +138,7 @@ export function DatabaseForm({ node }: Props) {
           {...register('allowFailOnLoopOver')}
           className="rounded border-gray-300"
         />
-        <label htmlFor="allowFailOnLoopOver" className="text-xs text-gray-600">Allow Fail On Loop</label>
+        <label htmlFor="allowFailOnLoopOver" className="text-xs text-gray-600 dark:text-gray-300">Allow Fail On Loop</label>
       </div>
     </form>
   );
