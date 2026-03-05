@@ -1,11 +1,15 @@
+import { useState } from 'react';
 import { useFlowStore } from '../../store/flowStore';
 import { NODE_COLORS } from '../../constants/defaults';
 import { DatabaseForm } from './DatabaseForm';
 import { TaskForm } from './TaskForm';
 import { ApiForm } from './ApiForm';
 import { ResponseForm } from './ResponseForm';
+import { JsonPreview } from '../JsonPreview';
 import type { StateType } from '../../types/policy';
 import type { IODMNode } from '../../types/flow';
+
+type Tab = 'properties' | 'json';
 
 const TYPE_LABEL: Record<StateType, string> = {
   DataBase: 'DataBase',
@@ -57,16 +61,45 @@ function NodeForm({ node }: { node: IODMNode }) {
   return null;
 }
 
+function TabBar({ tab, onTabChange }: { tab: Tab; onTabChange: (t: Tab) => void }) {
+  const base = 'flex-1 py-2 text-xs font-medium transition-colors border-b-2';
+  const active = 'border-blue-500 text-blue-600';
+  const inactive = 'border-transparent text-gray-500 hover:text-gray-700';
+  return (
+    <div className="flex border-b border-gray-200 flex-shrink-0">
+      <button
+        className={`${base} ${tab === 'properties' ? active : inactive}`}
+        onClick={() => onTabChange('properties')}
+      >
+        Propriedades
+      </button>
+      <button
+        className={`${base} ${tab === 'json' ? active : inactive}`}
+        onClick={() => onTabChange('json')}
+      >
+        JSON
+      </button>
+    </div>
+  );
+}
+
 export function NodePanel() {
   const nodes = useFlowStore((s) => s.nodes);
   const selectedNodeId = useFlowStore((s) => s.selectedNodeId);
   const setSelectedNodeId = useFlowStore((s) => s.setSelectedNodeId);
 
+  const [tab, setTab] = useState<Tab>('properties');
+
   const selectedNode = nodes.find((n) => n.id === selectedNodeId) ?? null;
 
   return (
     <aside className="w-72 h-full bg-gray-50 border-l border-gray-200 flex flex-col flex-shrink-0">
-      {selectedNode ? (
+      <TabBar tab={tab} onTabChange={setTab} />
+      {tab === 'json' ? (
+        <div className="flex-1 overflow-hidden flex flex-col">
+          <JsonPreview />
+        </div>
+      ) : selectedNode ? (
         <>
           <PanelHeader
             stateType={selectedNode.data.stateType}
@@ -78,14 +111,7 @@ export function NodePanel() {
           </div>
         </>
       ) : (
-        <>
-          <div className="px-4 py-3 border-b border-gray-200 flex-shrink-0">
-            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              Propriedades
-            </h2>
-          </div>
-          <EmptyState />
-        </>
+        <EmptyState />
       )}
     </aside>
   );

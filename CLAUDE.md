@@ -15,6 +15,7 @@ Stack: React 19 + TypeScript + React Flow v11 + Tailwind CSS v3 + Vite + Zustand
 - Após o build, execute: `npm test`
 - Se os testes falharem, não envie as alterações e corrija o código.
 - Após a execuções de ambos os comandos com sucesso, atualize a documentação com as alterações realizadas.
+- Após a execução dos testes também é importante executar o lint: `npm run lint`
 - Após todos os passos á cima estarem concluídos, execute o commit e push das alterações e uma nova branch seguindo o Conventional Commits.
 - E caso a tarefa exista no Asana, conclua-a.
 
