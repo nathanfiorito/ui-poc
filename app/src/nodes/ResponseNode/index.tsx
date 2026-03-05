@@ -20,7 +20,7 @@ export function ResponseNode({ id, data, selected }: NodeProps<ResponseNodeData>
       <Handle type="target" position={Position.Top} id="target" />
 
       <div className="bg-violet-500 text-white text-sm font-semibold px-3 py-1.5 rounded-t-md flex items-center justify-between">
-        <span>Response</span>
+        <span>Response{data.label ? ` — ${data.label}` : ''}</span>
         <span className="text-xs bg-violet-700 rounded px-1.5 py-0.5">END</span>
       </div>
 
