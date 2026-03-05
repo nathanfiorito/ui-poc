@@ -24,8 +24,11 @@ function buildConditions(nodeId: string, edges: Edge[]): Condition[] {
 }
 
 function nodeToState(node: Node<IODMNodeData>, edges: Edge[]): State {
-  // Strip UI-only fields from node data
-  const { label: _label, stateType: _stateType, isStart: _isStart, ...stateFields } = node.data as IODMNodeData & Record<string, unknown>;
+  // Strip UI-only fields (label, stateType, isStart) from node data
+  const UI_FIELDS = new Set(['label', 'stateType', 'isStart']);
+  const stateFields = Object.fromEntries(
+    Object.entries(node.data).filter(([key]) => !UI_FIELDS.has(key))
+  ) as Record<string, unknown>;
 
   const nodeId = node.id;
 
