@@ -23,7 +23,7 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeData>) {
     if (defaultRowRef.current) {
       setDefaultTop(defaultRowRef.current.offsetTop + defaultRowRef.current.offsetHeight / 2);
     }
-  }); // sem dependências: re-roda a cada render para garantir posições corretas
+  }, [conditions.length]);
 
   return (
     <div
