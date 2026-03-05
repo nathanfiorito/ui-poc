@@ -2,11 +2,13 @@ import { useRef, type ChangeEvent } from 'react';
 import { useFlowStore } from '../../store/flowStore';
 import { serializePolicy } from '../../utils/policySerializer';
 import { parsePolicy } from '../../utils/policyParser';
+import { useTheme } from '../../contexts/ThemeContext';
 import type { Policy } from '../../types/policy';
 
 export function Toolbar() {
   const { policyMeta, setPolicyMeta, nodes, edges, setNodes, setEdges } = useFlowStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { theme, toggleTheme } = useTheme();
 
   function handleExport() {
     const policy = serializePolicy(nodes, edges, policyMeta);
@@ -47,20 +49,36 @@ export function Toolbar() {
   }
 
   return (
-    <header className="h-12 bg-white border-b border-gray-200 flex items-center px-4 gap-4 shrink-0">
-      <span className="text-sm font-semibold text-gray-500 select-none">Policy:</span>
+    <header className="h-12 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center px-4 gap-4 shrink-0">
+      <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 select-none">Policy:</span>
       <input
         type="text"
         value={policyMeta.name}
         onChange={(e) => setPolicyMeta({ name: e.target.value })}
-        className="text-sm font-medium text-gray-800 border border-transparent rounded px-2 py-1 hover:border-gray-300 focus:border-blue-400 focus:outline-none transition-colors w-56"
+        className="text-sm font-medium text-gray-800 dark:text-gray-100 dark:bg-transparent border border-transparent rounded px-2 py-1 hover:border-gray-300 dark:hover:border-gray-600 focus:border-blue-400 focus:outline-none transition-colors w-56"
         placeholder="Nome da Policy"
       />
 
       <div className="ml-auto flex items-center gap-2">
         <button
+          onClick={toggleTheme}
+          className="flex items-center justify-center w-8 h-8 rounded border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          aria-label="Alternar tema"
+        >
+          {theme === 'dark' ? (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1m15.07-6.07-.707.707M6.343 17.657l-.707.707m12.728 0-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 1 0 0 10A5 5 0 0 0 12 7z" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          )}
+        </button>
+
+        <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />

@@ -23,8 +23,8 @@ export function ApiNode({ id, data, selected }: NodeProps<ApiNodeData>) {
 
   return (
     <div
-      className={`rounded-lg border-2 border-green-500 bg-white shadow-md min-w-[200px] cursor-pointer ${
-        isSelected ? 'ring-2 ring-green-400 ring-offset-1' : ''
+      className={`rounded-lg border-2 border-green-500 bg-white dark:bg-gray-800 shadow-md min-w-[200px] cursor-pointer ${
+        isSelected ? 'ring-2 ring-green-400 ring-offset-1 dark:ring-offset-gray-900' : ''
       }`}
       onClick={() => setSelectedNodeId(id)}
     >
@@ -38,11 +38,11 @@ export function ApiNode({ id, data, selected }: NodeProps<ApiNodeData>) {
       </div>
 
       <div className="px-3 py-2 space-y-1">
-        <p className="text-sm font-medium text-gray-800 truncate">
-          <span className="font-mono text-green-700 text-xs font-bold mr-1">{method}</span>
+        <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
+          <span className="font-mono text-green-700 dark:text-green-400 text-xs font-bold mr-1">{method}</span>
           {domain}
         </p>
-        <span className="inline-block text-xs bg-green-100 text-green-700 rounded px-1.5 py-0.5 font-mono">
+        <span className="inline-block text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded px-1.5 py-0.5 font-mono">
           {responsePath}
         </span>
       </div>

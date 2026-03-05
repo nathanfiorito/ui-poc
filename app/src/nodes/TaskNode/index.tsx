@@ -12,8 +12,8 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeData>) {
 
   return (
     <div
-      className={`rounded-lg border-2 border-amber-500 bg-white shadow-md min-w-[200px] cursor-pointer ${
-        isSelected ? 'ring-2 ring-amber-400 ring-offset-1' : ''
+      className={`rounded-lg border-2 border-amber-500 bg-white dark:bg-gray-800 shadow-md min-w-[200px] cursor-pointer ${
+        isSelected ? 'ring-2 ring-amber-400 ring-offset-1 dark:ring-offset-gray-900' : ''
       }`}
       onClick={() => setSelectedNodeId(id)}
     >
@@ -25,21 +25,21 @@ export function TaskNode({ id, data, selected }: NodeProps<TaskNodeData>) {
 
       <div className="px-3 py-2 space-y-1">
         {conditions.length === 0 ? (
-          <p className="text-xs text-gray-400 italic">No conditions</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 italic">No conditions</p>
         ) : (
           conditions.map((condition, index) => (
             <div key={index} className="flex items-center gap-1.5">
-              <span className="inline-block text-xs bg-amber-100 text-amber-700 rounded px-1.5 py-0.5 font-mono truncate max-w-[140px]">
+              <span className="inline-block text-xs bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 rounded px-1.5 py-0.5 font-mono truncate max-w-[140px]">
                 {condition.expression}
               </span>
-              <span className="text-xs text-gray-400">→ {condition.next}</span>
+              <span className="text-xs text-gray-400 dark:text-gray-500">→ {condition.next}</span>
             </div>
           ))
         )}
 
-        <div className="flex items-center gap-1.5 pt-1 border-t border-gray-100">
-          <span className="text-xs text-gray-500 italic">default</span>
-          <span className="text-xs text-gray-400">→ {data.next ?? '—'}</span>
+        <div className="flex items-center gap-1.5 pt-1 border-t border-gray-100 dark:border-gray-700">
+          <span className="text-xs text-gray-500 dark:text-gray-400 italic">default</span>
+          <span className="text-xs text-gray-400 dark:text-gray-500">→ {data.next ?? '—'}</span>
         </div>
       </div>
 

@@ -12,8 +12,8 @@ export function DatabaseNode({ id, data, selected }: NodeProps<DatabaseNodeData>
 
   return (
     <div
-      className={`rounded-lg border-2 border-blue-500 bg-white shadow-md min-w-[180px] cursor-pointer ${
-        isSelected ? 'ring-2 ring-blue-400 ring-offset-1' : ''
+      className={`rounded-lg border-2 border-blue-500 bg-white dark:bg-gray-800 shadow-md min-w-[180px] cursor-pointer ${
+        isSelected ? 'ring-2 ring-blue-400 ring-offset-1 dark:ring-offset-gray-900' : ''
       }`}
       onClick={() => setSelectedNodeId(id)}
     >
@@ -24,8 +24,8 @@ export function DatabaseNode({ id, data, selected }: NodeProps<DatabaseNodeData>
       </div>
 
       <div className="px-3 py-2 space-y-1">
-        <p className="text-sm font-medium text-gray-800 truncate">{tableName}</p>
-        <span className="inline-block text-xs bg-blue-100 text-blue-700 rounded px-1.5 py-0.5 font-mono">
+        <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{tableName}</p>
+        <span className="inline-block text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded px-1.5 py-0.5 font-mono">
           {resultPath}
         </span>
       </div>

@@ -48,12 +48,12 @@ function onDragStart(event: DragEvent<HTMLDivElement>, nodeType: StateType) {
 
 export function Sidebar() {
   return (
-    <aside className="w-52 h-full bg-gray-50 border-r border-gray-200 flex flex-col">
-      <div className="px-4 py-3 border-b border-gray-200">
-        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+    <aside className="w-52 h-full bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
           Nós Disponíveis
         </h2>
-        <p className="text-xs text-gray-400 mt-0.5">Arraste para o canvas</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Arraste para o canvas</p>
       </div>
 
       <div className="flex-1 p-3 space-y-2 overflow-y-auto">
@@ -62,7 +62,7 @@ export function Sidebar() {
             key={type}
             draggable
             onDragStart={(e) => onDragStart(e, type)}
-            className="cursor-grab active:cursor-grabbing rounded-lg border-2 bg-white shadow-sm p-3 select-none hover:shadow-md transition-shadow"
+            className="cursor-grab active:cursor-grabbing rounded-lg border-2 bg-white dark:bg-gray-700 shadow-sm p-3 select-none hover:shadow-md transition-shadow"
             style={{ borderColor: color }}
           >
             <div className="flex items-center gap-2 mb-1">
@@ -74,7 +74,7 @@ export function Sidebar() {
                 {label}
               </span>
             </div>
-            <p className="text-xs text-gray-500 leading-snug">{description}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 leading-snug">{description}</p>
           </div>
         ))}
       </div>

@@ -12,8 +12,8 @@ export function ResponseNode({ id, data, selected }: NodeProps<ResponseNodeData>
 
   return (
     <div
-      className={`rounded-lg border-2 border-violet-500 bg-white shadow-md min-w-[200px] cursor-pointer ${
-        isSelected ? 'ring-2 ring-violet-400 ring-offset-1' : ''
+      className={`rounded-lg border-2 border-violet-500 bg-white dark:bg-gray-800 shadow-md min-w-[200px] cursor-pointer ${
+        isSelected ? 'ring-2 ring-violet-400 ring-offset-1 dark:ring-offset-gray-900' : ''
       }`}
       onClick={() => setSelectedNodeId(id)}
     >
@@ -28,16 +28,16 @@ export function ResponseNode({ id, data, selected }: NodeProps<ResponseNodeData>
         {entries.length > 0 ? (
           entries.map(([key, value]) => (
             <div key={key} className="flex items-center gap-1 text-xs">
-              <span className="font-medium text-gray-700">{key}</span>
-              <span className="text-gray-400">←</span>
-              <span className="font-mono text-violet-600 bg-violet-50 rounded px-1">{value}</span>
+              <span className="font-medium text-gray-700 dark:text-gray-300">{key}</span>
+              <span className="text-gray-400 dark:text-gray-500">←</span>
+              <span className="font-mono text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/40 rounded px-1">{value}</span>
             </div>
           ))
         ) : (
-          <p className="text-xs text-gray-400 italic">sem responseBody</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 italic">sem responseBody</p>
         )}
         {data.resultPath && (
-          <span className="inline-block text-xs bg-violet-100 text-violet-700 rounded px-1.5 py-0.5 font-mono mt-1">
+          <span className="inline-block text-xs bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300 rounded px-1.5 py-0.5 font-mono mt-1">
             {data.resultPath}
           </span>
         )}

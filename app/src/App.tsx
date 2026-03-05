@@ -5,7 +5,7 @@ import { Toolbar } from './components/Toolbar';
 
 function App() {
   return (
-    <div className="w-full h-screen flex flex-col">
+    <div className="w-full h-screen flex flex-col bg-white dark:bg-gray-900">
       <Toolbar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
