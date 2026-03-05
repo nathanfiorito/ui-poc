@@ -177,4 +177,46 @@ describe('serializePolicy', () => {
       expect(state).not.toHaveProperty('isStart');
     }
   });
+
+  it('uses node.data.label as state key instead of node.id when they differ', () => {
+    const { nodes, edges } = parsePolicy(helloWorldPolicy);
+    // Simulate drag-and-drop: change node IDs to random ones while keeping labels
+    const remappedNodes = nodes.map((n) => ({ ...n, id: `random-${Math.random()}` }));
+    // Remap edges to use the new random IDs
+    const idMap = new Map(nodes.map((n, i) => [n.id, remappedNodes[i].id]));
+    const remappedEdges = edges.map((e) => ({
+      ...e,
+      source: idMap.get(e.source) ?? e.source,
+      target: idMap.get(e.target) ?? e.target,
+    }));
+
+    const result = serializePolicy(remappedNodes, remappedEdges, policyMeta);
+
+    // Keys should be labels (original state names), not random IDs
+    expect(result.states['DatabaseStateExample']).toBeDefined();
+    expect(result.states['TaskStateExample']).toBeDefined();
+    expect(result.states['APIStateExample']).toBeDefined();
+  });
+
+  it('resolves next references to labels, not internal node IDs', () => {
+    const { nodes, edges } = parsePolicy(helloWorldPolicy);
+    const remappedNodes = nodes.map((n) => ({ ...n, id: `id-${n.data.label}` }));
+    const idMap = new Map(nodes.map((n, i) => [n.id, remappedNodes[i].id]));
+    const remappedEdges = edges.map((e) => ({
+      ...e,
+      source: idMap.get(e.source) ?? e.source,
+      target: idMap.get(e.target) ?? e.target,
+    }));
+
+    const result = serializePolicy(remappedNodes, remappedEdges, policyMeta);
+
+    expect(result.states['DatabaseStateExample'].next).toBe('TaskStateExample');
+    expect(result.states['APIStateExample'].next).toBe('ResponseStateExample');
+
+    const taskState = result.states['TaskStateExample'];
+    if (taskState.type === 'task') {
+      expect(taskState.conditions[0].next).toBe('ReturnHigherThan');
+      expect(taskState.conditions[1].next).toBe('ReturnLowerThan');
+    }
+  });
 });

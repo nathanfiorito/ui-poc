@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useFlowStore } from '../../store/flowStore';
 import { serializePolicy } from '../../utils/policySerializer';
 import { parsePolicy } from '../../utils/policyParser';
+import { validateNodeNames } from '../../utils/validators';
 import { useTheme } from '../../contexts/ThemeContext';
 import { PolicyJsonModal } from '../PolicyJsonModal';
 import type { Policy } from '../../types/policy';
@@ -11,7 +12,17 @@ export function Toolbar() {
   const { theme, toggleTheme } = useTheme();
   const [modalMode, setModalMode] = useState<'import' | 'export' | null>(null);
 
-  function getExportJson() {
+  function getExportJson(): string | null {
+    const errors = validateNodeNames(nodes);
+    if (errors.length > 0) {
+      const messages = errors.map((e) =>
+        e.type === 'empty_name'
+          ? `- Nó sem nome (ID: ${e.nodeId})`
+          : `- Nome duplicado: "${e.label}"`
+      );
+      alert(`Não foi possível exportar. Corrija os problemas:\n\n${messages.join('\n')}`);
+      return null;
+    }
     const policy = serializePolicy(nodes, edges, policyMeta);
     return JSON.stringify(policy, null, 2);
   }
@@ -70,7 +81,7 @@ export function Toolbar() {
           </button>
 
           <button
-            onClick={() => setModalMode('export')}
+            onClick={() => { if (getExportJson() !== null) setModalMode('export'); }}
             className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,7 +95,7 @@ export function Toolbar() {
       {modalMode !== null && (
         <PolicyJsonModal
           mode={modalMode}
-          json={modalMode === 'export' ? getExportJson() : undefined}
+          json={modalMode === 'export' ? (getExportJson() ?? undefined) : undefined}
           onImport={handleImport}
           onClose={() => setModalMode(null)}
         />
