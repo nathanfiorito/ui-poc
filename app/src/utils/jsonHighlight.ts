@@ -7,11 +7,13 @@ export function highlightJson(json: string): string {
   return escaped.replace(
     /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
     (match) => {
-      let cls = 'text-violet-400';
+      let cls = 'text-violet-600 dark:text-violet-400';
       if (/^"/.test(match)) {
-        cls = /:$/.test(match) ? 'text-blue-400' : 'text-green-400';
+        cls = /:$/.test(match)
+          ? 'text-blue-600 dark:text-blue-400'
+          : 'text-green-600 dark:text-green-400';
       } else if (/true|false|null/.test(match)) {
-        cls = 'text-amber-400';
+        cls = 'text-amber-600 dark:text-amber-400';
       }
       return `<span class="${cls}">${match}</span>`;
     },

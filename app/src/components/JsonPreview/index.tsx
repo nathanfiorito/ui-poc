@@ -35,9 +35,9 @@ export function JsonPreview() {
           {copied ? 'Copiado!' : 'Copiar'}
         </button>
       </div>
-      <div className="flex-1 overflow-auto p-3 bg-gray-900 rounded-b">
+      <div className="flex-1 overflow-auto p-3 bg-gray-50 dark:bg-gray-900 rounded-b">
         <pre
-          className="text-xs font-mono leading-relaxed whitespace-pre"
+          className="text-xs font-mono leading-relaxed whitespace-pre text-gray-700 dark:text-gray-300"
           dangerouslySetInnerHTML={{ __html: highlightJson(json) }}
         />
       </div>
