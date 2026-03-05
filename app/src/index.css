@@ -18,3 +18,8 @@ body,
   width: 100%;
   height: 100%;
 }
+
+@keyframes edge-flow {
+  from { stroke-dashoffset: 20; }
+  to   { stroke-dashoffset: 0; }
+}
