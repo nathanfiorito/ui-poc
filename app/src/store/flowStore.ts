@@ -9,6 +9,7 @@ import {
 } from 'reactflow';
 import type { IODMNode, IODMEdge, IODMNodeData, TaskNodeData } from '../types/flow';
 import type { PolicyMeta, StateType } from '../types/policy';
+import type { Condition } from '../types/policy/condition';
 import {
   DEFAULT_DATABASE_STATE,
   DEFAULT_TASK_STATE,
@@ -129,12 +130,31 @@ export const useFlowStore = create<FlowState>((set, get) => ({
   setPolicyMeta: (meta) =>
     set({ policyMeta: { ...get().policyMeta, ...meta } }),
 
-  updateNodeData: (id, data) =>
+  updateNodeData: (id, data) => {
+    const { nodes, edges } = get();
+
+    let updatedEdges = edges;
+    if ('conditions' in data && Array.isArray(data.conditions)) {
+      updatedEdges = edges.map((e) => {
+        if (e.source !== id || e.type !== 'conditional') return e;
+        const idx = parseInt(e.sourceHandle?.replace('condition-', '') ?? '-1', 10);
+        const condition = (data.conditions as Condition[])[idx];
+        if (!condition) return e;
+        return {
+          ...e,
+          label: condition.expression,
+          data: { ...e.data, expression: condition.expression, resultPath: condition.resultPath },
+        };
+      });
+    }
+
     set({
-      nodes: get().nodes.map((n) =>
+      nodes: nodes.map((n) =>
         n.id === id ? ({ ...n, data: { ...n.data, ...data } } as IODMNode) : n
       ),
-    }),
+      edges: updatedEdges,
+    });
+  },
 
   addNode: (type, position) => {
     const id = `${type}-${Math.random().toString(36).slice(2, 9)}`;

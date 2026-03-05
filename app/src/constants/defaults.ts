@@ -30,6 +30,7 @@ export const DEFAULT_API_STATE: Omit<ApiState, 'next' | 'end'> = {
     route: '',
     method: 'GET',
     responsePath: '',
+    authentication: false,
   },
 };
 

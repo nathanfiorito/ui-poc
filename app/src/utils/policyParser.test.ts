@@ -106,7 +106,7 @@ const helloWorldPolicy: Policy = {
         headers: { 'Content-Type': 'application/json' },
         body: { cpf: 'input.client.cpf' },
         responsePath: 'outputApi',
-        authentication: 'true',
+        authentication: true,
       },
     },
     ReturnHigherThan: {
@@ -248,7 +248,7 @@ describe('parsePolicy', () => {
     expect(resource.route).toBe('https://api.example.com/clientes');
     expect(resource.method).toBe('POST');
     expect(resource.responsePath).toBe('outputApi');
-    expect(resource.authentication).toBe('true');
+    expect(resource.authentication).toBe(true);
   });
 
   it('embeds DatabaseNode domain data into node.data', () => {

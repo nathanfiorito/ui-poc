@@ -33,7 +33,7 @@ export const apiFormSchema = baseSchema.extend({
   headers: z.array(kvSchema),
   body: z.string().optional(),
   responsePath: z.string().min(1, 'Obrigatório'),
-  authentication: z.string().optional(),
+  authentication: z.boolean(),
 });
 
 export const responseFormSchema = z.object({
