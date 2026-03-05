@@ -20,7 +20,7 @@ export function DatabaseNode({ id, data, selected }: NodeProps<DatabaseNodeData>
       <Handle type="target" position={Position.Top} id="target" />
 
       <div className="bg-blue-500 text-white text-sm font-semibold px-3 py-1.5 rounded-t-md">
-        DataBase
+        DataBase{data.label ? ` — ${data.label}` : ''}
       </div>
 
       <div className="px-3 py-2 space-y-1">
