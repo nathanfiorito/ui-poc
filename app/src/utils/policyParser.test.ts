@@ -226,10 +226,13 @@ describe('parsePolicy', () => {
     expect(responseEdges).toHaveLength(0);
   });
 
-  it('initializes all node positions to {x:0, y:0} for later layout', () => {
+  it('applies Dagre layout so all node positions are numeric coordinates', () => {
     const { nodes } = parsePolicy(helloWorldPolicy);
     nodes.forEach(node => {
-      expect(node.position).toEqual({ x: 0, y: 0 });
+      expect(typeof node.position.x).toBe('number');
+      expect(typeof node.position.y).toBe('number');
+      expect(isFinite(node.position.x)).toBe(true);
+      expect(isFinite(node.position.y)).toBe(true);
     });
   });
 });
