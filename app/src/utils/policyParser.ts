@@ -5,6 +5,7 @@ import type { DatabaseState } from '../types/policy/database';
 import type { TaskState } from '../types/policy/task';
 import type { ApiState } from '../types/policy/api';
 import type { ResponseState } from '../types/policy/response';
+import { applyDagreLayout } from './layoutUtils';
 
 export interface ParseResult {
   nodes: Node<IODMNodeData>[];
@@ -70,5 +71,5 @@ export function parsePolicy(policy: Policy): ParseResult {
     }
   });
 
-  return { nodes, edges };
+  return { nodes: applyDagreLayout(nodes, edges), edges };
 }
